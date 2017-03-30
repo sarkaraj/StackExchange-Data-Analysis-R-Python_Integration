@@ -1,0 +1,45 @@
+---
+title: "AI_stackExchange_EDA"
+author: "rajarshisarkar"
+date: "March 29, 2017"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+# EDA AI Stack Exchange Data : First Phase
+
+***
+
+```{r data extraction}
+
+# Using python for XML parsing 
+command <- "python"
+script <- "https://github.com/sarkaraj/EDA_with_Python/blob/master/votesEDA.py"
+datafile <- "../data/ai.stackexchange.com/Votes.xml"
+targetfile <- "../AI/resources/votes.csv"
+allargs <- c(script, datafile, targetfile)
+output <- system2(command, args = allargs, stdout = TRUE)
+
+# Working
+
+```
+
+```{r EDA Votes}
+votesData <- read.csv2(file = "../AI/resources/votes.csv", header = TRUE, sep = ",", stringsAsFactors = FALSE)
+
+summary(votesData)
+
+library(ggplot2)
+
+
+temp <- as.POSIXct(votesData$CreationDate)
+temp <- format(temp, "%m")
+
+votesData$month <- temp
+
+ggplot(data = votesData, aes(x = votesData$month, fill = votesData$month)) + 
+  geom_bar(stat = 'count')
+
+```
