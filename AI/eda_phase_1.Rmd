@@ -12,22 +12,61 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ***
 
-```{r data extraction}
+```{r data extraction, include=FALSE}
+# Obtaining python scripts from git repo
+command <- "git"
+action <- "clone"
+repo <- "https://github.com/sarkaraj/EDA_with_Python"
 
-# Using python for XML parsing 
+## Check if scripts directory is present. If present no need to pass 'directory' param.
+
+if (dir.exists(paste0(getwd(), "/scripts"))) {
+  ## Directory Exists
+  unlink(x = paste0(getwd(), "/scripts"), recursive = TRUE, force = TRUE)
+}
+directory <- paste0(getwd(), "/scripts")
+allargs <- c(action, repo, directory)
+output <- system2(command, args = allargs, stdout = FALSE)
+
+
+
+
+# Refreshing resource directory
+if (dir.exists(paste0(getwd(), "/resources"))) {
+  ## Directory exists
+  unlink(x = paste0(getwd(), "/resources"), recursive = TRUE, force = TRUE)
+  dir.create(paste0(getwd(), "/resources"))
+} else {
+  dir.create(paste0(getwd(), "/resources"))
+}
+
+# Using downloaded python scripts for XML parsing 
 command <- "python"
-script <- "https://github.com/sarkaraj/EDA_with_Python/blob/master/votesEDA.py"
-datafile <- "../data/ai.stackexchange.com/Votes.xml"
-targetfile <- "../AI/resources/votes.csv"
-allargs <- c(script, datafile, targetfile)
-output <- system2(command, args = allargs, stdout = TRUE)
+script <- paste0(getwd(), "/scripts/", "convert.py")
 
-# Working
+## Changing working directory to parent directory
+setwd("..")
 
+## parsing all xml files
+data_files <- list.files(paste0(getwd(), "/data/ai.stackexchange.com"))
+
+for (filename in data_files) {
+  datafile <- paste0(getwd(), "/data/ai.stackexchange.com/", filename)
+  filename <- strsplit(filename, ".", fixed = TRUE)[[1]][1]
+  targetfile <- paste0(getwd(), "/AI/resources/", filename, ".csv")
+  allargs <- c(script, datafile, targetfile)
+  output <- system2(command, args = allargs, stdout = FALSE)
+}
+
+## Changing working directory back to original child directory
+setwd("./AI")
+
+## Deleting the scripts
+unlink(x = paste0(getwd(), "/scripts"), recursive = TRUE, force = TRUE)
 ```
 
 ```{r EDA Votes}
-votesData <- read.csv2(file = "../AI/resources/votes.csv", header = TRUE, sep = ",", stringsAsFactors = FALSE)
+votesData <- read.csv2(file = "../AI/resources/Votes.csv", header = TRUE, sep = ",", stringsAsFactors = FALSE)
 
 summary(votesData)
 
