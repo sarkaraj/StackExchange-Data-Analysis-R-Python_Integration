@@ -43,7 +43,6 @@ if (dir.exists(paste0(getwd(), "/resources"))) {
 # Using downloaded python scripts for XML parsing 
 command <- "python"
 script <- paste0(getwd(), "/scripts/", "convert.py")
-<<<<<<< HEAD
 
 ## Changing working directory to parent directory
 setwd("..")
@@ -66,7 +65,8 @@ setwd("./AI")
 unlink(x = paste0(getwd(), "/scripts"), recursive = TRUE, force = TRUE)
 
 ## Clearing out the workspace after data loading is complete
-rm(list=ls(all=TRUE))
+rm(list = ls(all = TRUE))
+
 ```
 
 ```{r EDA Votes - Phase 1 (General)}
@@ -74,32 +74,6 @@ rm(list=ls(all=TRUE))
 if (!dir.exists(paste0(getwd(), "/results"))) {
   dir.create(paste0(getwd(), "/results"))
 }
-
-=======
-
-## Changing working directory to parent directory
-setwd("..")
-
-## parsing all xml files
-data_files <- list.files(paste0(getwd(), "/data/ai.stackexchange.com"))
-
-for (filename in data_files) {
-  datafile <- paste0(getwd(), "/data/ai.stackexchange.com/", filename)
-  filename <- strsplit(filename, ".", fixed = TRUE)[[1]][1]
-  targetfile <- paste0(getwd(), "/AI/resources/", filename, ".csv")
-  allargs <- c(script, datafile, targetfile)
-  output <- system2(command, args = allargs, stdout = FALSE)
-}
-
-## Changing working directory back to original child directory
-setwd("./AI")
-
-## Deleting the scripts
-unlink(x = paste0(getwd(), "/scripts"), recursive = TRUE, force = TRUE)
-```
-
-```{r EDA Votes}
->>>>>>> origin/master
 votesData <- read.csv2(file = "../AI/resources/Votes.csv", header = TRUE, sep = ",", stringsAsFactors = FALSE)
 
 summary(votesData)
